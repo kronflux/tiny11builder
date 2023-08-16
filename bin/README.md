@@ -1,0 +1,1 @@
+nsudo.exe and oscdimg.exe are not included in this repository. You can download and copy these to the "bin" folder in the root directory, or run the provided powershell scripts to obtain them automatically.

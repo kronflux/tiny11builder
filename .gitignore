@@ -1,1 +1,3 @@
-tools/WindowsIsoDownloader
+bin/WindowsIsoDownloader
+bin/oscdimg.exe
+bin/nsudo.exe

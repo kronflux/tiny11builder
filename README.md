@@ -1,66 +1,65 @@
-# tiny11builder, PowerShell edition
+# tiny11 Windows Builder
 
-This repository contains a PowerShell rewrite of the original, batch written, ntdevlabs/tiny11builder repository.
+Script to build a trimmed-down Windows 11 image. (Should also work on Windows 10 with some tweaks to config.json)
 
-This script will:
-* download the latest Windows 11 iso from Microsoft.
-* build a trimmed-down Windows 11 installer iso.
+This is a script to automate the build of a streamlined Windows 11 image, similar to NTDEV's tiny11.
 
-Two executables are included:
-* oscdimg.exe (it is part of the Windows ADK: <https://learn.microsoft.com/fr-fr/windows-hardware/get-started/adk-install#download-the-adk-for-windows-11-version-22h2>. It is used to create bootable ISO images.
-* WindowsIsoDownloader.exe (you can find the source code and build it if you want: <https://github.com/ianis58/WindowsIsoDownloader>) (not directly included, but is downloaded by the PowerShell script).
+The main goal is to primarily use Microsoft utilities in order to create this image.
+No Microsoft or Third-Party executables have been included with this script. Instead, I have provided a script called "GetBins.cmd" which downloads them from official sources.
+The binaries downloaded are as follows:
+- oscdimg.exe - which is provided in the Windows ADK (<https://learn.microsoft.com/en-US/windows-hardware/get-started/adk-install>)
+and is used to create bootable ISO images
+- nsudo.exe - which is provided by the M2Team (<https://github.com/M2TeamArchived/NSudo>)
+and is used to elevate the script to run as TrustedInstaller in order to modify or remove protected components in the Windows 11 image.
 
-Also included is autounattend.xml file:
-* it bypass the need to connect to/create a Microsoft account during OOBE (Out Of the Box Experience, AKA the first startup setup wizard).
-* it automatically accept the EULA (End User Licence Agreement) so it skip this step.
-* it skip the product key step (if your PC was bought with Windows 10 or 11 on it and it has EFI/UEFI, the product key is stored in EFI/UEFI and is automatically used. Otherwise, you'll be able to set it after setup).
+Also included is an unattended answer file, which is used to bypass the MS account on OOBE and to deploy the image with the /compact flag.
 
-# Run it
+It's open-source, so feel free to add or remove anything you want! Feedback is also much appreciated.
 
-1. Download this repository as zip and unzip it where you want.
-2. Open a Powershell as administrator, go to the extraction path, and run the following commands:
+Current and new Windows 11 builds are supported, but may need some small adjustments. Please report issue or create pull requests if you're able to patch some issues.
+
+Instructions:
+
+1. Download latest Windows 11. You can get this from any of the following sources:
+- Microsoft website (<https://www.microsoft.com/software-download/windows11>)
+- UUP dump (<https://uupdump.net>)
+- Windows Iso Downloader (<https://github.com/ianis58/WindowsIsoDownloader>) - You can use the "GetWindowsIsoDownloader.cmd" script to download it, and change "UseWindowsIsoDownloader" in config.json to "true".
+2. Place the downloaded file in C:\windows11.iso (be sure to rename it so that it match that filename. This can be modified in the config\config.json file if you wish).
+3. Run the included Start_tiny11builder.cmd script to launch the Powershell script as TrustedInstaller via NSudo.
+Note, you may have to set your Execution Policy to Bypass in order to run this script. You can do so by the following steps:
+- Open a Powershell terminal with admin rights and run the following command:
 ```
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\tiny11creator.ps1
 ```
-3. Sit back and relax :) (it runs for 25 minutes approximately on my old-but-decent laptop). You might see some errors with RemoveWindowsPackage but it's not an issue (has to do with the order and dependencies of packages to remove).
-4. The created Windows 11 installer iso is available in c:\tiny11.iso
+3. Sit back and relax :)
+4. When the image is completed, you will find it in the output directory (by default, this is set to C:\tiny11\output)
 
-### Optional:
-5. After setup and once connected to the internet, I recommend to install the package manager from Microsoft called winget. Run this command in PowerShell:
-```
-Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe
-```
-Then you can run one of these to get your favorite browser:
-```
-winget install Mozilla.Firefox
-winget install Microsoft.Edge
-winget install Opera.Opera
-winget install Google.Chrome
-```
-
-# Features
-Removed apps:
-
+What is currently removed:
 Clipchamp,
+Cortana,
 News,
 Weather,
-Xbox,
+Xbox (although Xbox Identity provider has not been removed here, so it should be possible to be reinstalled with no issues),
 GetHelp,
 GetStarted,
+3D Viewer,
 Office Hub,
 Solitaire,
+Mixed Reality Portal,
 PeopleApp,
 PowerAutomate,
+Skype,
 ToDo,
 Alarms,
-Mail and Calendar,
 Feedback Hub,
 Maps,
 Sound Recorder,
 Your Phone,
 Media Player,
+Family,
 QuickAssist,
+Teams,
+Mail and Calendar,
 Internet Explorer,
 LA57 support,
 OCR for en-us,
@@ -70,14 +69,12 @@ Media Player Legacy,
 Tablet PC Math,
 Wallpapers,
 Edge,
-OneDrive.
+OneDrive
 
-Small tweaks:
-* dark theme enabled by default.
-* some file explorer config turned on: show hidden files, show known file extensions, ...
-* taskbar aligned to the left.
+I have also included a script called ConvertReg.cmd which you can drag a standard(live windows environment locations such as HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE, etc) REG file onto, and it will produce a modified REG file who's values are compatible with this script. You can then use these values in install_wim_modifications.reg and boot_wim_modifications.reg
 
-# Known issues:
+Known issues:
 
-* Microsoft Teams is somehow still there. Feel free to create a PR if you can fix it!
-* Although Edge is removed, the desktop icon, a ghost of its taskbar pin, and some remnants in the Settings about it are still showing.
+1. Although Edge is removed, the icon and a ghost of its taskbar pin are still available. Also, there are some remnants in the Settings. But the app in itself is deleted.
+2. Some of the registry tweaks included with this script seem to be overwritten when the user account is created. I'm not sure why this is, but if anyone can provide some insight into this, it would be greatly appreciated.
+3. The removal of certain files and folders causes SFC /SCANNOW to fail and re-acquire them. There doesn't seem to be any way around this, however there is no harm in either having or not having these files present. If you wish to avoid SFC finding issues, simply remove all of the current entries under PathsToRemove from config.json.
