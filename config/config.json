@@ -42,7 +42,8 @@
         "MicrosoftCorporationII.MicrosoftFamily",
         "MicrosoftCorporationII.QuickAssist",
         "MicrosoftTeams",
-        "microsoft.windowscommunicationsapps"
+        "microsoft.windowscommunicationsapps",
+        "Microsoft.Windows.Ai.Copilot.Provider"
     ],
     "WindowsPackagesToRemove": [
         "Microsoft-Windows-InternetExplorer-Optional",
