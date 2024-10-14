@@ -1,7 +1,7 @@
 {
     "NSudoURL": "https://github.com/M2TeamArchived/NSudo/releases/download/9.0-Preview1/NSudo_9.0_Preview1_9.0.2676.0.zip",
-    "WinADKURL": "https://go.microsoft.com/fwlink/?linkid=2196127",
     "WindowsIsoDownloaderURL": "https://github.com/ianis58/WindowsIsoDownloader/releases/download/v1.1/WindowsIsoDownloader.zip",
+    "WinADKURL": "https://go.microsoft.com/fwlink/?linkid=2271337",
     "UseWindowsIsoDownloader": "false",
     "InputIsoPath": "C:\\windows11.iso",
     "WorkingDir": "C:\\tiny11",

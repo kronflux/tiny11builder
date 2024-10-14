@@ -27,7 +27,6 @@ Function Get-RedirectedUrl {
 # List of packages used to install/extract oscdimg.exe
 $oscdimgPackages = @(
     "Oscdimg (DesktopEditions)-x86_en-us.msi",
-    "52be7e8e9164388a9e6c24d01f6f1625.cab",
     "5d984200acbde182fd99cbfbe9bad133.cab",
     "9d2b092478d6cca70d5ac957368c00ba.cab",
     "bbf55224a0290f00676ddc410f004498.cab"
